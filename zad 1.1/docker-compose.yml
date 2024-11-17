@@ -4,6 +4,7 @@ services:
   z36_server:
     build:
       context: ./server_python
+#     context: ./server_cpp
       dockerfile: Dockerfile
     image: z36_server_image
     container_name: z36_server_container
@@ -16,6 +17,7 @@ services:
   z36_client:
     build:
       context: ./client_cpp
+#     context: ./client_python
       dockerfile: Dockerfile
     image: z36_client_image
     container_name: z36_client_container
