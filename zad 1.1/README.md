@@ -1,4 +1,4 @@
-# Zad.1.1
+# Zadanie 1.1
 
 Ten katalog zawiera implementacje systemu klient-serwer wykorzystującego protokół UDP. Kod został napisany w dwóch językach programowania: Python i C++. Dla każdego z nich przygotowano osobne Dockerfile.
 
