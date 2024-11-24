@@ -51,7 +51,7 @@ docker network create `
 
 ### 3. Wprowadzanie zakłóceń w środowisku
 
-Żeby zasymulować warunki gubienia pakietów, na drugim terminalu (na pierwszym uruchamiamy kontenery i obserwujemy to co zwracają na programy) trzeba uruchomić polecenia
+Żeby zasymulować warunki gubienia pakietów, na drugim terminalu (na pierwszym uruchamiamy kontenery i obserwujemy to co zwracają nam programy) trzeba uruchomić polecenia
 ```bash
 docker exec z36_client_container tc qdisc add dev eth0 root netem loss 40%
 docker exec z36_server_container tc qdisc add dev eth0 root netem loss 40%
