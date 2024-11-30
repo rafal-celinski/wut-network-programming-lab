@@ -2,11 +2,10 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <chrono>
 
 #define SERVER_IP "172.21.36.2"
 #define SERVER_PORT 8080
-#define BUFFER_SIZE 100000
+#define BUFFER_SIZE 200000
 
 int main() {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -34,8 +33,9 @@ int main() {
 
     int client_socket;
     struct sockaddr_in client_address;
+    socklen_t addr_len = sizeof(client_address);
 
-    client_socket = accept(sock, (struct sockaddr*)& client_address, sizeof(client_address));
+    client_socket = accept(sock, (struct sockaddr*)& client_address, &addr_len);
     if (client_socket < 0) {
         std::cout << "Failed to accept" << std::endl;
         close(sock);
@@ -46,25 +46,18 @@ int main() {
     std::cout << "Client connected - closing socket to prevent other connections" << std::endl;
 
     char buffer[BUFFER_SIZE] = {0};
-    auto last_time = std::chrono::high_resolution_clock::now();
     while (true) {
         int bytes_received = read(client_socket, buffer, BUFFER_SIZE);
         if (bytes_received > 0) {
-            auto current_time = std::chrono::high_resolution_clock::now();
-            auto difference = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_time).count();
             std::cout << "Received message from client of size: " << bytes_received <<std::endl;
-            std::cout << "Time since last message: " << difference << " ms" << std::endl;
-
-            last_time = current_time;
             std::memset(buffer, 0, BUFFER_SIZE);
-            sleep(3);
+            sleep(1);
         }
-        else {
-            std::cout<< "End of connection" << std::endl;
+        else if (bytes_received <= 0) {
+            std::cout << "Error or disconnection occurred" << std::endl;
             break;
         }
     }
-
     close(client_socket);
     return 0;
 }

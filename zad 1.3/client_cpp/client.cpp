@@ -2,9 +2,21 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>    
+#include <sys/socket.h>   
+#include <netinet/in.h>   
+#include <netinet/tcp.h>
 
 #define SERVER_IP "172.21.36.2"
-#define SERVER_PORT 5018
+#define SERVER_PORT 8080
+#define MAX_MESSAGE_SIZE 200000
+
+long long get_current_time_in_ms() {
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    return time.tv_sec * 1000LL + time.tv_usec / 1000;
+}
 
 int main() {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -18,64 +30,45 @@ int main() {
     server_addr.sin_port = htons(SERVER_PORT);
     inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr);
 
-    int max_datagram_size = 100000;
-
-    char message[max_datagram_size];
-    char buffer[1024];
-    int message_size = 2;
-    bool failed_send = false;
-    bool found_max = false;
-
-    while (true) {
-        message[0] = message_size & 0xFF;
-        message[1] = (message_size >> 8) & 0xFF;
-        message[2] = (message_size >> 16) & 0xFF;
-        message[3] = (message_size >> 24) & 0xFF;
-
-        for (int i = 4; i < message_size + 4; ++i) {
-            message[i] = 'A' + (i % 26);
-        }
-
-        ssize_t sent_bytes = sendto(sock, message, message_size + 4, 0, (struct sockaddr*)&server_addr, sizeof(server_addr));
-        if (sent_bytes != message_size + 4) {
-            failed_send = true;
-            std::cout << "Failed to send datagram of size " << message_size + 4 << std::endl;
-            message_size -= 1;
-            usleep(5000);
-            continue;   
-        } else {
-            std::cout << "Sent datagram of size " << message_size + 4 << " bytes, message size: "<< message_size << std::endl;
-            if(failed_send)
-            {
-                found_max = true;
-            }
-        }
-
-        struct sockaddr_in from_addr;
-        socklen_t from_len = sizeof(from_addr);
-        ssize_t recv_len = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr*)&from_addr, &from_len);
-        if (recv_len > 0) {
-            std::string feedback = std::string(buffer, recv_len);
-            std::cout << "Received acknowledgment: " << feedback << std::endl;
-            if(feedback != "OK")
-            {
-                std::cout << "Invalid packet received from server, sending message of same size again." << std::endl;
-                sleep(1);
-                continue;
-            }
-        } else {
-            std::cout << "No acknowledgment received" << std::endl;
-        }
-
-        if(found_max)
-        {
-            std::cout << "Maximum datagram size sent: " << message_size + 4 << std::endl;
-            break;
-        }
-        message_size = message_size * 2;
-        sleep(1);
+    if(connect(sock, (struct sockaddr*)& server_addr, sizeof(server_addr)) < 0) {
+        std::cout << "Failed to connect" << std::endl;
+        return -1;
     }
 
+    // Wyłączanie algorytmu Nagle'a - nwm czy potrzebne, wyniki jakoś się nie różnią dla tych małych pakietów
+    // int flag = 1;
+    // if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0) {
+    //     std::cerr << "Failed to disable Nagle's Algorithm" << std::endl;
+    //     return -1;
+    // }
+
+    std::cout << "Connected to server" << std::endl;
+
+    int message_size = 200;
+    
+    while(message_size <= MAX_MESSAGE_SIZE)
+    {
+        char* message = new char[message_size];
+        memset(message, 'M', message_size);
+        for (int i = 0; i < 100; i++)
+        {
+            long long start_time = get_current_time_in_ms();
+            int bytes_send = send(sock, message, message_size, 0);
+            if (bytes_send < 0) {
+                std::cout << "Couldn't send message" << std::endl;
+                close(sock);
+                delete[] message;
+                return -1;
+            }
+
+            long long end_time = get_current_time_in_ms();
+            long long difference = end_time - start_time;
+            std::cout << "Message " << i << " of size " << message_size << " B sent in " << difference << " ms" << std::endl;
+        }
+        delete[] message;
+        message_size *= 10;
+    }
+    std::cout << "Sent all messages" << std::endl;
     close(sock);
     return 0;
 }
