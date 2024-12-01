@@ -2,6 +2,7 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <netinet/tcp.h>
 
 #define SERVER_IP "172.21.36.2"
 #define SERVER_PORT 8080
@@ -45,12 +46,19 @@ int main() {
     close(sock);
     std::cout << "Client connected - closing socket to prevent other connections" << std::endl;
 
+    //Wyłączenie delayed ACK - nie wpływa na wyniki
+    // int flag = 1; 
+    // if (setsockopt(client_socket, IPPROTO_TCP, TCP_QUICKACK, &flag, sizeof(flag)) < 0) {
+    //     std::cout << "Failed to disable delayed ACK" << std::endl;
+    // } else {
+    //     std::cout << "Disabled delayed ACK successful" << std::endl;
+    // }
+
     char buffer[BUFFER_SIZE] = {0};
     while (true) {
         int bytes_received = read(client_socket, buffer, BUFFER_SIZE);
         if (bytes_received > 0) {
             std::cout << "Received message from client of size: " << bytes_received <<std::endl;
-            std::memset(buffer, 0, BUFFER_SIZE);
             sleep(1);
         }
         else if (bytes_received <= 0) {

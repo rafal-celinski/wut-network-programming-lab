@@ -35,11 +35,12 @@ int main() {
         return -1;
     }
 
-    // Wyłączanie algorytmu Nagle'a - nwm czy potrzebne, wyniki jakoś się nie różnią dla tych małych pakietów
+   // Wyłączanie algorytmu Nagle'a - nie wpływa na wyniki
     // int flag = 1;
     // if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0) {
-    //     std::cerr << "Failed to disable Nagle's Algorithm" << std::endl;
-    //     return -1;
+    //     std::cout << "Failed to disable Nagle's Algorithm" << std::endl;
+    // } else {
+    //     std:: cout << "Disable Nagle's Algorithm successfuly" << std::endl;
     // }
 
     std::cout << "Connected to server" << std::endl;

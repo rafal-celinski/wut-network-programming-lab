@@ -1,4 +1,4 @@
-# Zadanie 1.3
+# Zadanie 2
 
 Ten katalog zawiera implementacje systemu klient-serwer wykorzystującego protokół TCP. Kod został napisany w C++. Dla klienta i serwera przygotowano osobne Dockerfile.
 
@@ -17,7 +17,7 @@ Ten katalog zawiera implementacje systemu klient-serwer wykorzystującego protok
 - **`docker-compose.yml`**  
   - Plik konfiguracyjny Docker Compose do uruchomienia środowiska klient-serwer.
 
-- **`[PSI]Z36_Zad1.1_Sprawozdanie.pdf`**  
+- **`[PSI]Z36_Zad2_Sprawozdanie.pdf`**  
   - Sprawozdanie z wynikami zadania.
 
 ---
