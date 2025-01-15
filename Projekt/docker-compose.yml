@@ -19,6 +19,7 @@ services:
       dockerfile: Dockerfile
     image: z36_client_image
 
+
 networks:
   z36_network:
     external: true

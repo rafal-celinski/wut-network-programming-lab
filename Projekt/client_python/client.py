@@ -29,7 +29,7 @@ HELLO_LOCK = threading.Lock()
 
 def encrypt_message(message):
     expanded_key = SHA256.new(str(SHARED_KEY).encode('utf-8')).digest()
-    print(SHARED_KEY)
+    # print(SHARED_KEY)
     
     
     iv = get_random_bytes(16)
@@ -43,12 +43,12 @@ def encrypt_message(message):
     hmac = HMAC.new(expanded_key, digestmod=SHA256)
     hmac.update(iv + ciphertext)
 
-    print(f"IV: {iv}")
-    print(f"Ciphertext: {ciphertext}")
-    print(f"Computed HMAC: {hmac.digest()}")
+    # print(f"IV: {iv}")
+    # print(f"Ciphertext: {ciphertext}")
+    # print(f"Computed HMAC: {hmac.digest()}")
     
     final_message = iv + ciphertext + hmac.digest()
-    print(final_message)
+    # print(final_message)
     
     return final_message
 
@@ -113,7 +113,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     try:
         s.connect((HOST, TCP_PORT))
     except ConnectionRefusedError:
-        print(f"Could not connect to server {HOST}:{TCP_PORT}. Is the server running?")
+        print(f"Could not connect to server {HOST}:{TCP_PORT}")
         sys.exit(1)
 
     print(f'Connected to server {HOST}:{TCP_PORT}')

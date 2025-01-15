@@ -41,8 +41,8 @@ def encrypt_message(message, shared_key):
 
 
 def decrypt_message(encrypted_message, shared_key):
-    print(shared_key)
-    print(encrypted_message)
+    # print(shared_key)
+    # print(encrypted_message)
     iv = encrypted_message[:16]  
     ciphertext = encrypted_message[16:-32]  
     received_hmac = encrypted_message[-32:]  
@@ -53,10 +53,10 @@ def decrypt_message(encrypted_message, shared_key):
     hmac = HMAC.new(expanded_key, digestmod=SHA256)
 
     hmac.update(iv + ciphertext)
-    print(f"IV: {iv}")
-    print(f"Ciphertext: {ciphertext}")
-    print(f"Received HMAC: {received_hmac}")
-    print(f"Computed HMAC: {hmac.digest()}")
+    # print(f"IV: {iv}")
+    # print(f"Ciphertext: {ciphertext}")
+    # print(f"Received HMAC: {received_hmac}")
+    # print(f"Computed HMAC: {hmac.digest()}")
     try:
         hmac.verify(received_hmac)
     except ValueError:
@@ -156,11 +156,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     serving_clients_thread.daemon = True
     serving_clients_thread.start()
     try:
+        print("If you want to print clients connected write `list`, else just type IP:PORT of client you want to connect")
         while True:
-            print(clients_ready())
-            client_ip = input("Enter client IP to send message to:\n")
-            message = input("Enter message to send:\n")
-            send_message_to_client(client_ip, message)
+            command = input()
+            if command == "list":
+                print(clients_ready())
+            else:
+                client_ip = command
+                message = input("Enter message to send:\n")
+                send_message_to_client(client_ip, message)
     except KeyboardInterrupt:
         s.close()
         
