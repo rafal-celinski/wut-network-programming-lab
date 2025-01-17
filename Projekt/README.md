@@ -69,10 +69,10 @@ docker run -it --rm --name z36_client2_container --network z36_network --ip 172.
 
 Należy pamiętać, że adresy `172.21.36.1, 172.21.36.2` są już zarezerwowane.
 
-Dodatkowe parametry używane przy tworzeniu kontenerów klienta:
-`-b` - baza, używana do obliczania klucza publicznego, wysyłana do kontenera serwera w ramach algorytmu Diffiego-Hellmana
-`-m` - moduł, używany do obliczania klucza publicznego i wspólnego, wysyłana do kontenera serwera w ramach algorytmu Diffiego-Hellmana
-`-k` - klucz prywatny
+Dodatkowe parametry używane przy tworzeniu kontenerów klienta: 
+- `-b` - baza, używana do obliczania klucza publicznego, wysyłana do kontenera serwera w ramach algorytmu Diffiego-Hellmana
+- `-m` - moduł, używany do obliczania klucza publicznego i wspólnego, wysyłana do kontenera serwera w ramach algorytmu Diffiego-Hellmana
+- `-k` - klucz prywatny
 
 To powinno wystarczyć na środowisku `bigubu`, na którym istnieją już sieci dockerowe,
 natomiast gdy takich nie posiadamy należy je stworzyć:
